@@ -54,3 +54,24 @@ pids
 
 # Diagnostic reports (https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+# NestJS specific
+/dist
+/node_modules
+/.nest
+*.tsbuildinfo
+
+# Tailwind CSS specific
+.cache
+.tailwindcss-cache
+*.css.map
+*.js.map
+
+# Build output
+/public/build
+/public/css
+/public/js
+
+# Misc
+.DS_Store
+Thumbs.db
