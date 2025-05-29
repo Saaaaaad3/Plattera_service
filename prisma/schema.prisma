@@ -17,6 +17,39 @@ datasource db {
   // directUrl = env("DATABASE_URL_UNPOOLED")
 }
 
+model GlobalCategories {
+  globalCategoryId Int      @id @default(autoincrement())
+  code            String   @unique // e.g., "south_indian", "drinks"
+  name            String   // e.g., "South Indian", "Drinks"
+  description     String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  restaurantCategories RestaurantCategories[]
+
+  @@index([code])
+}
+
+model RestaurantCategories {
+  categoryId       Int      @id @default(autoincrement())
+  restId           Int
+  categorySlug     String   // e.g., "south-indian-specials" (renamed from categoryCode)
+  displayName      String   // e.g., "South Indian Specials"
+  globalCategoryId Int?     // Optional reference to global category
+  displayOrder     Int      @default(0)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  // Relations
+  globalCategory   GlobalCategories? @relation(fields: [globalCategoryId], references: [globalCategoryId])
+  menuItems        MenuItems[]
+
+  @@unique([restId, categorySlug])  // Updated from categoryCode
+  @@index([restId, categorySlug])   // Updated from categoryCode
+  @@index([globalCategoryId])
+}
+
 model MenuItems {
   itemId          Int      @id @default(autoincrement())
   itemName        String   @unique
@@ -30,8 +63,22 @@ model MenuItems {
   itemBestSeller  Boolean  @default(false)
   itemIsVeg       Boolean  @default(false)
   itemthumbnail   String   @default("/DummyDishImage.jpg")
-  itemCategoryId  Int
+  restaurantCategoryId Int  // Renamed from itemCategoryId to be more specific
   itemIngredients String
+
+  // Denormalized fields for faster queries
+  categorySlug    String   // Renamed from categoryCode to match RestaurantCategories
+  globalCategoryId Int?    // Denormalized from RestaurantCategories
+  categoryDisplayName String // Denormalized from RestaurantCategories
+
+  // Relations
+  category        RestaurantCategories @relation(fields: [restaurantCategoryId], references: [categoryId])
+  images          ItemImages[]
+
+  @@index([restId])
+  @@index([restaurantCategoryId])  // Updated from itemCategoryId
+  @@index([categorySlug])          // Updated from categoryCode
+  @@index([globalCategoryId])
 }
 
 model ItemImages {
@@ -40,6 +87,9 @@ model ItemImages {
   menuItemId Int      // Reference to the menu item
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  // Relations
+  menuItem   MenuItems @relation(fields: [menuItemId], references: [itemId])
 
   @@index([menuItemId])  // Index for better query performance
 }
