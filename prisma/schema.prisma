@@ -25,10 +25,21 @@ model MenuItems {
   itemDescription String
   itemSweet       Boolean  @default(false)
   itemSpicy       Boolean  @default(false)
-  itemSweetLevel  Int      @default(0)
   itemSpiceLevel  Int      @default(0)
   itemAvailable   Boolean  @default(true)
   itemBestSeller  Boolean  @default(false)
   itemIsVeg       Boolean  @default(false)
-  itemIsJain      Boolean  @default(false)
+  itemthumbnail   String   @default("/DummyDishImage.jpg")
+  itemCategoryId  Int
+  itemIngredients String
+}
+
+model ItemImages {
+  imageId    Int      @id @default(autoincrement())
+  imageUrl   String
+  menuItemId Int      // Reference to the menu item
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([menuItemId])  // Index for better query performance
 }

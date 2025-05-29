@@ -7,7 +7,9 @@ export class MenuItemsService {
   constructor(private readonly databaseService: DatabaseService) {}
 
   async create(createMenuItemDto: Prisma.MenuItemsCreateInput) {
-    return 'This action adds a new menuItem';
+    return this.databaseService.menuItems.create({
+      data: createMenuItemDto,
+    });
   }
 
   async findAll() {
@@ -23,10 +25,17 @@ export class MenuItemsService {
   }
 
   async update(id: number, updateMenuItemDto: Prisma.MenuItemsUpdateInput) {
-    return `This action updates a #${id} menuItem`;
+    return this.databaseService.menuItems.update({
+      where: { itemId: id },
+      data: updateMenuItemDto,
+    });
   }
 
   async remove(id: number) {
-    return `This action removes a #${id} menuItem`;
+    return this.databaseService.menuItems.delete({
+      where: {
+        itemId: id,
+      },
+    });
   }
 }
