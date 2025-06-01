@@ -1,95 +1,89 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
-// prisma/schema.prisma
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
-  // uncomment next line if you use Prisma <5.10
-  // directUrl = env("DATABASE_URL_UNPOOLED")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model GlobalCategories {
-  globalCategoryId Int      @id @default(autoincrement())
-  code            String   @unique // e.g., "south_indian", "drinks"
-  name            String   // e.g., "South Indian", "Drinks"
-  description     String?
-  createdAt       DateTime @default(now())
-  updatedAt       DateTime @updatedAt
-
-  // Relations
+  globalCategoryId     Int                    @id @default(autoincrement())
+  code                 String                 @unique
+  name                 String
+  description          String?
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
   restaurantCategories RestaurantCategories[]
 
   @@index([code])
 }
 
 model RestaurantCategories {
-  categoryId       Int      @id @default(autoincrement())
+  categoryId       Int               @id @default(autoincrement())
   restId           Int
-  categorySlug     String   // e.g., "south-indian-specials" (renamed from categoryCode)
-  displayName      String   // e.g., "South Indian Specials"
-  globalCategoryId Int?     // Optional reference to global category
-  displayOrder     Int      @default(0)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-
-  // Relations
-  globalCategory   GlobalCategories? @relation(fields: [globalCategoryId], references: [globalCategoryId])
+  categorySlug     String
+  displayName      String
+  globalCategoryId Int?
+  displayOrder     Int               @default(0)
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
   menuItems        MenuItems[]
+  globalCategory   GlobalCategories? @relation(fields: [globalCategoryId], references: [globalCategoryId])
 
-  @@unique([restId, categorySlug])  // Updated from categoryCode
-  @@index([restId, categorySlug])   // Updated from categoryCode
+  @@unique([restId, categorySlug])
+  @@index([restId, categorySlug])
   @@index([globalCategoryId])
 }
 
 model MenuItems {
-  itemId          Int      @id @default(autoincrement())
-  itemName        String   @unique
-  restId          Int
-  itemPrice       Decimal  @db.Decimal(10, 2)
-  itemDescription String
-  itemSweet       Boolean  @default(false)
-  itemSpicy       Boolean  @default(false)
-  itemSpiceLevel  Int      @default(0)
-  itemAvailable   Boolean  @default(true)
-  itemBestSeller  Boolean  @default(false)
-  itemIsVeg       Boolean  @default(false)
-  itemthumbnail   String   @default("/DummyDishImage.jpg")
-  restaurantCategoryId Int  // Renamed from itemCategoryId to be more specific
-  itemIngredients String
-
-  // Denormalized fields for faster queries
-  categorySlug    String   // Renamed from categoryCode to match RestaurantCategories
-  globalCategoryId Int?    // Denormalized from RestaurantCategories
-  categoryDisplayName String // Denormalized from RestaurantCategories
-
-  // Relations
-  category        RestaurantCategories @relation(fields: [restaurantCategoryId], references: [categoryId])
-  images          ItemImages[]
+  itemId               Int                  @id @default(autoincrement())
+  itemName             String               @unique
+  restId               Int
+  itemPrice            Decimal              @db.Decimal(10, 2)
+  itemDescription      String
+  itemSweet            Boolean              @default(false)
+  itemSpicy            Boolean              @default(false)
+  itemSpiceLevel       Int                  @default(0)
+  itemAvailable        Boolean              @default(true)
+  itemBestSeller       Boolean              @default(false)
+  itemIsVeg            Boolean              @default(false)
+  itemthumbnail        String               @default("/DummyDishImage.jpg")
+  itemIngredients      String
+  restaurantCategoryId Int
+  categorySlug         String
+  globalCategoryId     Int?
+  categoryDisplayName  String
+  images               ItemImages[]
+  category             RestaurantCategories @relation(fields: [restaurantCategoryId], references: [categoryId])
 
   @@index([restId])
-  @@index([restaurantCategoryId])  // Updated from itemCategoryId
-  @@index([categorySlug])          // Updated from categoryCode
+  @@index([restaurantCategoryId])
+  @@index([categorySlug])
   @@index([globalCategoryId])
 }
 
 model ItemImages {
-  imageId    Int      @id @default(autoincrement())
+  imageId    Int       @id @default(autoincrement())
   imageUrl   String
-  menuItemId Int      // Reference to the menu item
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-
-  // Relations
+  menuItemId Int
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
   menuItem   MenuItems @relation(fields: [menuItemId], references: [itemId])
 
-  @@index([menuItemId])  // Index for better query performance
+  @@index([menuItemId])
+}
+
+model User {
+  userId       Int       @id @default(autoincrement())
+  userName     String
+  userMobile   String    @unique
+  isRestOwner  Boolean   @default(false)
+  userLocation String?
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  lastLoginAt  DateTime?
+
+  @@index([userMobile])
 }
