@@ -31,10 +31,26 @@ model RestaurantCategories {
   updatedAt        DateTime          @updatedAt
   menuItems        MenuItems[]
   globalCategory   GlobalCategories? @relation(fields: [globalCategoryId], references: [globalCategoryId])
+  restaurant       Restaurant        @relation(fields: [restId], references: [restId])
 
   @@unique([restId, categorySlug])
   @@index([restId, categorySlug])
   @@index([globalCategoryId])
+}
+
+model Restaurant {
+  restId        Int       @id @default(autoincrement())
+  userId        Int
+  name          String
+  description   String?
+  address       String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  user          User      @relation(fields: [userId], references: [userId])
+  menuItems     MenuItems[]
+  categories    RestaurantCategories[]
+
+  @@index([userId])
 }
 
 model MenuItems {
@@ -57,6 +73,7 @@ model MenuItems {
   categoryDisplayName  String
   images               ItemImages[]
   category             RestaurantCategories @relation(fields: [restaurantCategoryId], references: [categoryId])
+  restaurant           Restaurant           @relation(fields: [restId], references: [restId])
 
   @@index([restId])
   @@index([restaurantCategoryId])
@@ -114,6 +131,7 @@ model User {
   lastLoginAt  DateTime?
   sessions     Session[]
   otps         OTP[]
+  restaurants  Restaurant[]
 
   @@index([userMobile])
 }

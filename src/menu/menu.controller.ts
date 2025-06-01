@@ -5,6 +5,7 @@ import { MenuService } from './menu.service';
 export class MenuController {
   constructor(private readonly menuService: MenuService) {}
 
+  // Public endpoint - no auth needed
   @Get(':restId')
   GetAllByRestId(@Param('restId') restId: number) {
     return this.menuService.GetAllByRestId(restId);
