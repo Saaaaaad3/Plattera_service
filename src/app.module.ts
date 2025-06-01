@@ -5,6 +5,7 @@ import { AppService } from './app.service';
 import { MenuModule } from './menu/menu.module';
 import { DatabaseModule } from './database/database.module';
 import { MenuItemsModule } from './menu-items/menu-items.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -12,6 +13,7 @@ import { MenuItemsModule } from './menu-items/menu-items.module';
       envFilePath: `.env.${process.env.NODE_ENV || 'development'}`,
       isGlobal: true,
     }),
+    AuthModule,
     MenuModule,
     DatabaseModule,
     MenuItemsModule,

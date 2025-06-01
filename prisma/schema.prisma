@@ -75,6 +75,34 @@ model ItemImages {
   @@index([menuItemId])
 }
 
+model OTP {
+  id            Int       @id @default(autoincrement())
+  userId        Int?
+  mobileNumber  String
+  code          String    // Hashed OTP code
+  expiresAt     DateTime
+  isUsed        Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  user          User?     @relation(fields: [userId], references: [userId])
+
+  @@index([mobileNumber, code])
+  @@index([expiresAt])
+}
+
+model Session {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  token         String    @unique // JWT token
+  expiresAt     DateTime
+  createdAt     DateTime  @default(now())
+  lastActiveAt  DateTime  @default(now())
+  user          User      @relation(fields: [userId], references: [userId])
+
+  @@index([userId])
+  @@index([token])
+  @@index([expiresAt])
+}
+
 model User {
   userId       Int       @id @default(autoincrement())
   userName     String
@@ -84,6 +112,8 @@ model User {
   createdAt    DateTime  @default(now())
   updatedAt    DateTime  @updatedAt
   lastLoginAt  DateTime?
+  sessions     Session[]
+  otps         OTP[]
 
   @@index([userMobile])
 }
