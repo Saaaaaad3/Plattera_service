@@ -8,7 +8,7 @@ export class AuthController {
 
   @Post('login')
   async initiateLogin(@Body() dto: InitiateLoginDto) {
-    return this.authService.initiateLogin(dto.mobileNumber, dto.name);
+    return this.authService.initiateLogin(dto.mobileNumber);
   }
 
   @Post('verify')
