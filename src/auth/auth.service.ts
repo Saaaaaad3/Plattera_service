@@ -35,10 +35,7 @@ export class AuthService {
     return crypto.createHash('sha256').update(otp).digest('hex');
   }
 
-  async initiateLogin(
-    mobileNumber: string,
-    name: string,
-  ): Promise<{ isNewUser: boolean }> {
+  async initiateLogin(mobileNumber: string): Promise<{ isNewUser: boolean }> {
     // Validate mobile number format (Indian format)
     if (!/^[6-9]\d{9}$/.test(mobileNumber)) {
       throw new BadRequestException('Invalid mobile number format');
@@ -51,12 +48,12 @@ export class AuthService {
 
     const isNewUser = !user;
 
-    // If new user, create account
+    // If new user, create account with a default name
     if (isNewUser) {
       user = await this.prisma.user.create({
         data: {
           userMobile: mobileNumber,
-          userName: name,
+          userName: `User_${mobileNumber.slice(-4)}`, // Generate a default name using last 4 digits
           isRestOwner: false,
           userLocation: null,
           lastLoginAt: null,
@@ -158,7 +155,7 @@ export class AuthService {
       where: { userId: user.userId },
       data: { lastLoginAt: new Date() },
     });
-
+    console.log('Logged In');
     return { token };
   }
 

@@ -8,10 +8,6 @@ export class InitiateLoginDto {
       'Mobile number must be a valid Indian mobile number starting with 6-9',
   })
   mobileNumber: string;
-
-  @IsString()
-  @IsNotEmpty()
-  name: string;
 }
 
 export class VerifyOtpDto {
