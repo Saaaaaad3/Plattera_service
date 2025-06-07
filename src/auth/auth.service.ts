@@ -149,7 +149,7 @@ export class AuthService {
         ),
       },
     });
-
+    
     // Update last login
     await this.prisma.user.update({
       where: { userId: user.userId },
