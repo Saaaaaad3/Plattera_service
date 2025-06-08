@@ -5,11 +5,12 @@ import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MenuModule } from './menu/menu.module';
 import { DatabaseModule } from './database/database.module';
 import { MenuItemsModule } from './menu-items/menu-items.module';
 import { AuthModule } from './auth/auth.module';
-import { RolesGuard } from './auth/guards/roles.guard';
+import { RestaurantController } from './restaurant/restaurant.controller';
+import { RestaurantService } from './restaurant/restaurant.service';
+import { RestaurantModule } from './restaurant/restaurant.module';
 
 @Module({
   imports: [
@@ -35,11 +36,11 @@ import { RolesGuard } from './auth/guards/roles.guard';
       },
     ]),
     AuthModule,
-    MenuModule,
     DatabaseModule,
     MenuItemsModule,
+    RestaurantModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, RestaurantController],
   providers: [
     AppService,
     {
@@ -57,6 +58,7 @@ import { RolesGuard } from './auth/guards/roles.guard';
         },
       }),
     },
+    RestaurantService,
   ],
 })
 export class AppModule {}
