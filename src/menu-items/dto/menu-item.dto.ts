@@ -6,6 +6,7 @@ import {
   Min,
   Max,
   Length,
+  IsInt,
 } from 'class-validator';
 import { Type, Exclude } from 'class-transformer';
 
@@ -121,4 +122,64 @@ export class UpdateMenuItemDto {
   @Exclude()
   @IsOptional()
   categoryDisplayName?: string;
+}
+
+export class PaginatedMenuItemsQueryDto {
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  @Type(() => Number)
+  limit?: number = 10;
+
+  @IsOptional()
+  @IsString()
+  cursor?: string;
+
+  @IsOptional()
+  @IsString()
+  categorySlug?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Type(() => Boolean)
+  includeImages?: boolean = false;
+}
+
+export class PaginatedMenuItemsResponseDto {
+  items: any[];
+  nextCursor?: string;
+  hasMore: boolean;
+  totalCount: number;
+  categoryInfo?: {
+    categorySlug: string;
+    displayName: string;
+    totalItems: number;
+  };
+}
+
+export class CategoryMenuItemsQueryDto {
+  @IsInt()
+  @Min(1)
+  @Max(50)
+  @Type(() => Number)
+  limit: number = 10;
+
+  @IsOptional()
+  @IsString()
+  cursor?: string;
+
+  @IsOptional()
+  @IsBoolean()
+  @Type(() => Boolean)
+  includeImages?: boolean = false;
+}
+
+export class CategoryMenuItemsResponseDto {
+  categorySlug: string;
+  displayName: string;
+  items: any[];
+  nextCursor?: string;
+  hasMore: boolean;
+  totalItems: number;
 }
